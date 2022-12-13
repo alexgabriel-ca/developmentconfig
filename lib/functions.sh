@@ -23,8 +23,8 @@ function addDocker() {
 			echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 			apt-get update
 			apt-get install -y docker-ce docker-ce-cli containerd.io
-			#Add local user to docker group
-			usermod -aG docker archangel
+			#Add user running the script to docker group
+			usermod -aG docker $(id -u -n)
 			#Download and install Docker machine
 			curl -L https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
 			chmod +x /tmp/docker-machine
