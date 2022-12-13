@@ -2,14 +2,16 @@
 This is just a very basic, process based script I wrote to install apps/dev tools I use frequently.
 
 Functions are divided as follows:
-1. Add Desktop apps (noted below).
-1. Remove Firefox, Totem, Thunderbird, and Rhythmbox.
-1. Add Oracle JDK.
-1. Install NetBeans 11.
-1. Install Node.js
-1. Setup a LAMP server.
-1. Setup basic PHP Static analysis tools.
-1. Perform system upgrades.
+1. Install Docker.
+2. Install Terraform.
+3. Add Desktop apps (noted below).
+4. Remove Firefox, Totem, Thunderbird, and Rhythmbox.
+5. Add Oracle JDK.
+6. Install NetBeans 11.
+7. Install Node.js
+8. Setup a LAMP server.
+9. Setup basic PHP Static analysis tools.
+10. Perform system upgrades.
 
 Each function is called in order, and can be invoked or skipped, as required.
 
