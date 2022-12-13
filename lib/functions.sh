@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Alex Gabriel <alex@alexgabriel.ca>
 #Created: 18/02/2019
-#Modified: 08/10/2022
+#Modified: 13/12/2022
 #Description: Functions used in devconfig.sh.
 #License: GPL 3.0
 
