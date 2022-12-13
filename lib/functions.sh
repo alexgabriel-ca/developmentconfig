@@ -24,7 +24,7 @@ function addDocker() {
 			apt-get update
 			apt-get install -y docker-ce docker-ce-cli containerd.io
 			#Add user running the script to docker group
-			usermod -aG docker $(id -u -n)
+			usermod -aG docker $SUDO_USER
 			#Download and install Docker machine
 			curl -L https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
 			chmod +x /tmp/docker-machine
