@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Alex Gabriel <alex@alexgabriel.ca>
 #Created: 17/01/2019
-#Modified: 18/02/2019
+#Modified: 02/09/2021
 #Description: Short configuration script intended to configure basic desktop/development environment.
 #License: GPL 3.0
 
@@ -20,10 +20,13 @@ read -p "Do you agree to the terms and conditions and conditions as specified in
 if [ $accept == "y" ]; then
 	{
 		source "lib/functions.sh"
+		addDocker
+		addTerraform
 		addSoftware
+		addWebStuff
 		removeJunk
-		addJDK
-		installNetBeans
+		#addJDK
+		#installNetBeans
 		installNode
 		setupLAMP
 		setupStatAnalysis

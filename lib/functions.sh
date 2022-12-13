@@ -1,12 +1,64 @@
 #!/bin/bash
 #Author: Alex Gabriel <alex@alexgabriel.ca>
 #Created: 18/02/2019
-#Modified: 18/02/2019
+#Modified: 08/10/2022
 #Description: Functions used in devconfig.sh.
 #License: GPL 3.0
 
 function pause() {
 	read -rp "$*"
+}
+
+function addDocker() {
+	read -rp "Do you wish to install Docker? [yn] " adddocker
+	if [ "$adddocker" == y ]; then
+		#Enable key based authentication
+
+		echo "	Installing Docker..."
+		{
+			#Download and install Docker CE
+			apt-get update
+			apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+			curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+			echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+			apt-get update
+			apt-get install -y docker-ce docker-ce-cli containerd.io
+			#Add local user to docker group
+			usermod -aG docker archangel
+			#Download and install Docker machine
+			curl -L https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine
+			chmod +x /tmp/docker-machine
+			cp /tmp/docker-machine /usr/local/bin/docker-machine
+			#Download and install Docker compose
+			curl -L "https://github.com/docker/compose/releases/download/1.28.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+		}
+		echo "	Docker has been installed and configured."
+		echo ""
+	else
+		echo "	Docker installation has been skipped."
+	fi
+}
+
+function addTerraform() {
+	read -rp "Do you wish to install Terraform? [yn] " adddocker
+	if [ "$adddocker" == y ]; then
+		#Enable key based authentication
+
+		echo "	Installing Terraform..."
+		{
+			#Download and install Terraform
+			apt-get update && sudo apt-get install -y gnupg software-properties-common
+			wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+			gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+			echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+			apt update
+			apt-get install terraform
+		}
+		echo "	Terraform has been installed and configured."
+		echo ""
+	else
+		echo "	Terraform installation has been skipped."
+	fi
 }
 
 function addSoftware() {
@@ -17,13 +69,9 @@ function addSoftware() {
 		echo "	Installing software..."
 		{
 			apt-get update
-			apt-get install -y banshee build-essential chrome-gnome-shell curl default-jre default-jdk evolution fslint git gnome-tweak-tool keepassx libxcb-xtest0 sni-qt soundconverter ubuntu-restricted-extras vlc vorbisgain
-			wget -c https://d2t3ff60b2tol4.cloudfront.net/builds/insync_1.5.5.37367-artful_amd64.deb
-			wget -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-			wget -c https://d11yldzmag5yn.cloudfront.net/prod/2.7.162522.0121/zoom_amd64.deb
-			dpkg -i insync_1.5.5.37367-artful_amd64.deb
-			dpkg -i google-chrome-stable_current_amd64.deb
-			dpkg -i zoom_amd64.deb
+			apt-get install -y build-essential chrome-gnome-shell curl default-jdk default-jre dkms git gnome-tweaks keepassx libegl1-mesa libffi-dev libgl1-mesa-glx libxcb-xtest0 linux-headers-generic soundconverter ubuntu-restricted-extras vlc vorbisgain
+			snap install clementine spotify
+			snap install intellij-idea-ultimate --classic --edge
 		}
 		echo "	Software has been installed and configured."
 		echo ""
@@ -31,6 +79,28 @@ function addSoftware() {
 		echo "	Software installation has been skipped."
 	fi
 }
+
+function addWebStuff() {
+	read -rp "Do you wish to install Chrome, InSync and Zoom? [yn] " addwebstuff
+	if [ "$addwebstuff" == y ]; then
+		#Enable key based authentication
+
+		echo "	Installing Chrome, InSync and Zoom..."
+		{
+			wget -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+			wget -c https://zoom.us/client/latest/zoom_amd64.deb
+			wget -c https://cdn.insynchq.com/builds/linux/insync_3.7.12.50395-jammy_amd64.deb
+			dpkg -i google-chrome-stable_current_amd64.deb
+			dpkg -i zoom_amd64.deb
+			dpkg -i insync_3.7.0.50216-impish_amd64.deb
+		}
+		echo "	Chrome, InSync and Zoom have been installed and configured."
+		echo ""
+	else
+		echo "	Chrome, InSync and Zoom installation has been skipped."
+	fi
+}
+
 
 function removeJunk() {
 	read -rp "Do you wish to remove Firefox, Totem, Thunderbird, and Rhythmbox? [yn] " removejunk
@@ -63,7 +133,7 @@ function addJDK() {
 }
 
 function installNetBeans() {
-	read -rp "Do you wish to install NetBeans 11? [yn] " installNetBeans
+	read -rp "Do you wish to install NetBeans? [yn] " installNetBeans
 	if [ "$installNetBeans" == y ]; then
 		echo "	Installing NetBeans..."
 		{
@@ -82,8 +152,7 @@ function installNode() {
 	if [ "$installNode" == y ]; then
 		echo "Installing node and some NPM modules..."
 		{
-			curl -sL https://deb.nodesource.com/setup_10.x | bash -E
-			apt-get install -y nodejs
+			apt-get install -y nodejs npm
 			npm install -g axios bower express express-generator grunt gulp karma less lodash mongoose node-inspect nodemon request sass yargs
 		}
 		echo "	Node.js has been installed and configured."
@@ -98,7 +167,7 @@ function setupLAMP() {
 	if [ "$setupLAMP" == y ]; then
 		echo "Setting up LAMP with PHP MyAdmin..."
 		{
-			apt-get install -y apache2 libapache2-mod-php7.2 mysql-server php-cgi php-curl php-json php-mysql phpmyadmin php7.2-dev php7.2
+			apt-get install -y apache2 libapache2-mod-php8.1 mysql-server php-cgi php-curl php-json php-mysql phpmyadmin php8.1-dev php8.1
 			a2enmod userdir
 			mysql_secure_installation
 			systemctl restart apache2
@@ -111,7 +180,7 @@ function setupLAMP() {
 }
 
 function setupStatAnalysis() {
-	read -rp "Do you wish to enable PHP analysis tools? [yn] " setupStatAnalysis
+	read -rp "Do you wish to enable PHP static analysis tools? [yn] " setupStatAnalysis
 	if [ "$setupStatAnalysis" == y ]; then
 		echo "Setting up LAMP with PHP MyAdmin..."
 		{
